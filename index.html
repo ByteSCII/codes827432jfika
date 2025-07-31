@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>La Maldición del Tesoro Perdido</title>
+  <style>
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #000 url('https://images.unsplash.com/photo-1584464457690-0d5183a386e4?ixlib=rb-1.2.1&auto=format&fit=crop&q=80') no-repeat center center fixed;
+    background-size: cover;
+    color: #c5b358;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    overflow: hidden;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="%23c5b358" stroke-width="2"/></svg>'), auto;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .static {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://img.freepik.com/vector-gratis/textura-ruido-estatico-oscuro_1194-6429.jpg') repeat;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 2;
+    animation: noise 0.15s infinite;
+    mix-blend-mode: screen;
+  }
+
+  @keyframes noise {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 0.2; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    padding: 40px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1 {
+    font-size: 4rem;
+    margin: 0 0 20px;
+    text-shadow: 0 0 15px #c5b358, 0 0 30px rgba(197, 179, 88, 0.5);
+    letter-spacing: 4px;
+    animation: flicker 4s infinite alternate, glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+      text-shadow: 0 0 10px #c5b358, 0 0 20px rgba(197, 179, 88, 0.5);
+    }
+    20%, 24%, 55% {
+      text-shadow: none;
+    }
+  }
+
+  @keyframes glow {
+    0% { color: #c5b358; }
+    100% { color: #ffcc00; }
+  }
+
+  .clue {
+    font-size: 1.4rem;
+    max-width: 700px;
+    line-height: 1.8;
+    opacity: 0;
+    transition: opacity 2s;
+    margin: 20px 0;
+    border-left: 3px solid #c5b358;
+    padding-left: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
+  }
+
+  .clue.visible {
+    opacity: 1;
+  }
+
+  .warning {
+    color: #ff0000;
+    font-weight: bold;
+    font-style: italic;
+    margin: 15px 0;
+    opacity: 0;
+    transition: opacity 3s;
+  }
+
+  .warning.visible {
+    opacity: 1;
+  }
+
+  .btn {
+    margin-top: 30px;
+    padding: 12px 30px;
+    background: transparent;
+    border: 1px solid #c5b358;
+    color: #c5b358;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .btn.visible {
+    opacity: 1;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 10px #c5b358; }
+    50% { box-shadow: 0 0 25px #c5b358, 0 0 40px rgba(197, 179, 88, 0.8); }
+    100% { box-shadow: 0 0 10px #c5b358; }
+  }
+
+  .btn:hover {
+    background: rgba(197, 179, 88, 0.1);
+    transform: scale(1.05);
+  }
+
+  .hidden-message {
+    font-size: 1rem;
+    color: #550000;
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 3s;
+  }
+
+  .hidden-message.visible {
+    opacity: 1;
+  }
+
+  /* Efecto de distorsión en el fondo */
+  .distortion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.9) 100%);
+    opacity: 0;
+    z-index: 4;
+    transition: opacity 0.5s;
+  }
+
+  .distortion.active {
+    opacity: 1;
+  }
+
+  /* Fuente antigua */
+  @font-face {
+    font-family: 'OldScript';
+    src: url('https://fonts.googleapis.com/css2?family=Medieval+Sharp&display=swap');
+  }
+
+  .ancient {
+    font-family: 'Medieval Sharp', cursive;
+    font-size: 1.2rem;
+    color: #d4af37;
+    margin: 10px 0;
+    opacity: 0;
+  }
+
+  .ancient.visible {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+  <div class="overlay"></div>
+  <div class="static"></div>
+  <div class="distortion" id="distortion"></div>
+
+  <div class="container">
+    <h1>LA MALDICIÓN</h1>
+    <p class="clue" id="intro">Dicen que el tesoro fue enterrado con el capitán <span style="color: red;">Blackthorn</span>... en 1783. <br>Quien lo desentierre... heredará su maldición.</p>
+    
+    <div class="warning" id="warning">...no sigas... no es demasiado tarde...</div>
+    
+    <button class="btn" id="startBtn">¿Aceptas el desafío?</button>
+    
+    <p class="clue" id="clue1">Primera pista: <br>"Donde el cuervo grita al anochecer, <br>busca la piedra con forma de <span id="secret-word" style="visibility: hidden;">serpiente</span>."</p>
+    
+    <p class="ancient" id="ancient">℣. In tenebris regnat qui aurum non timet.</p>
+    
+    <p class="hidden-message" id="hiddenMsg">AVISO: El tiempo se acaba. Él sabe que estás aquí.</p>
+  </div>
+
+  <!-- Sonidos (ocultos) -->
+  <audio id="ambient" src="https://cdn.pixabay.com/audio/2021/08/18/audio_698583225.mp3" loop></audio>
+  <audio id="whisper" src="https://cdn.pixabay.com/audio/2022/01/25/audio_46567c9a88.mp3"></audio>
+  <audio id="scream" src="https://cdn.pixabay.com/audio/2022/04/13/audio_1784370853.mp3"></audio>
+
+  <script>
+    const ambientSound = document.getElementById('ambient');
+    const whisperSound = document.getElementById('whisper');
+    const screamSound = document.getElementById('scream');
+    const distortion = document.getElementById('distortion');
+
+    ambientSound.volume = 0.2;
+    whisperSound.volume = 0.3;
+    screamSound.volume = 0.5;
+
+    // Mostrar elementos progresivamente
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('intro').classList.add('visible');
+        document.getElementById('startBtn').classList.add('visible');
+      }, 1000);
+
+      // Susurro después de 5 segundos
+      setTimeout(() => {
+        document.getElementById('warning').classList.add('visible');
+        playSound(whisperSound);
+      }, 5000);
+    });
+
+    // Botón de inicio
+    document.getElementById('startBtn').addEventListener('click', () => {
+      const btn = document.getElementById('startBtn');
+      btn.textContent = "Corre...";
+      btn.style.background = "rgba(255,0,0,0.2)";
+      btn.style.borderColor = "red";
+
+      // Revelar palabra secreta
+      document.getElementById('secret-word').style.visibility = 'visible';
+      document.getElementById('clue1').classList.add('visible');
+
+      // Mostrar mensaje antiguo
+      setTimeout(() => {
+        document.getElementById('ancient').classList.add('visible');
+      }, 800);
+
+      // Efecto de distorsión
+      distortion.classList.add('active');
+      playSound(screamSound);
+
+      // Mostrar mensaje oculto
+      setTimeout(() => {
+        document.getElementById('hiddenMsg').classList.add('visible');
+      }, 3000);
+
+      // Parpadear fondo
+      setInterval(() => {
+        document.querySelector('.overlay').style.opacity = Math.random() * 0.3 + 0.6;
+      }, 2000);
+
+      // Sonido ambiental (una vez activado)
+      ambientSound.play().catch(e => console.log("Sonido bloqueado"));
+    });
+
+    // Reproducir sonido con intento de desbloqueo
+    function playSound(audio) {
+      audio.play().catch(e => {
+        console.log("Sonido bloqueado, intentando desbloquear...");
+        document.body.addEventListener('click', () => audio.play(), { once: true });
+      });
+    }
+
+    // Mensaje aleatorio de advertencia al mover el ratón
+    let warnings = [
+      "...te están observando...",
+      "¡NO MIRES ATRÁS!",
+      "El tiempo se acaba...",
+      "Él ya sabe tu nombre..."
+    ];
+
+    document.addEventListener('mousemove', () => {
+      if (Math.random() < 0.03) {
+        alert(warnings[Math.floor(Math.random() * warnings.length)]);
+      }
+    });
+
+    // Bloquear clic derecho (para misterio)
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+
+</body>
+</html>
