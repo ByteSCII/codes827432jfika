@@ -14,6 +14,13 @@
       box-sizing: border-box;
     }
 
+    /* Animación de tambaleo (SHAKE) */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
     body {
       background: #000 url('https://images.unsplash.com/photo-1584464457690-0d5183a386e4?ixlib=rb-1.2.1&auto=format&fit=crop&q=80') no-repeat center center fixed;
       background-size: cover;
@@ -21,7 +28,15 @@
       font-family: 'Courier New', monospace;
       min-height: 100vh;
       overflow-y: auto;
+      /* Cursor personalizado: data URI corregido */
       cursor: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="%23c5b358" stroke-width="2"/></svg>'), auto;
+    }
+
+    /* Clase para tambaleo */
+    body.shake {
+      animation: shake 0.05s infinite;
+      transform: translateZ(0);
+      will-change: transform;
     }
 
     /* Efecto de estática global */
@@ -39,7 +54,6 @@
       mix-blend-mode: screen;
       animation: noise 0.15s infinite;
     }
-
     @keyframes noise {
       0%, 100% { opacity: 0.1; }
       50% { opacity: 0.15; }
@@ -64,13 +78,13 @@
       opacity: 0.6;
     }
 
-    /* Contador */
+    /* Contador - Ahora abajo y siempre temblando */
     .counter {
       position: fixed;
-      top: 50%;
+      bottom: 10%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 12rem;
+      transform: translateX(-50%);
+      font-size: 8rem;
       font-weight: bold;
       color: #00ffff;
       text-shadow: 
@@ -85,6 +99,14 @@
       mix-blend-mode: screen;
       letter-spacing: 5px;
       animation: flickerCounter 0.8s infinite alternate;
+    }
+
+    /* Ajuste para móviles */
+    @media (max-width: 768px) {
+      .counter {
+        font-size: 6rem;
+        bottom: 12%;
+      }
     }
 
     @keyframes flickerCounter {
@@ -103,6 +125,7 @@
       opacity: 0;
       pointer-events: none;
       z-index: 3;
+      transition: opacity 0.3s;
     }
 
     /* Contenedor principal */
@@ -115,7 +138,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: opacity 0.5s;
+      transition: all 0.5s ease;
     }
 
     /* Texto BYTE HUNT */
@@ -133,7 +156,6 @@
       animation: pulse 2s infinite alternate;
       mix-blend-mode: screen;
     }
-
     @keyframes pulse {
       0% { text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff; }
       100% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px rgba(0,255,255,0.8); }
@@ -146,7 +168,6 @@
       letter-spacing: 3px;
       animation: glow 2s infinite alternate;
     }
-
     @keyframes glow {
       0% { color: #c5b358; text-shadow: 0 0 10px #c5b358; }
       100% { color: #ffcc00; text-shadow: 0 0 20px #ffcc00, 0 0 30px rgba(255,204,0,0.5); }
@@ -171,7 +192,6 @@
       cursor: pointer;
       transition: all 0.4s;
     }
-
     .btn:hover {
       background: rgba(0, 255, 255, 0.1);
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
@@ -194,18 +214,15 @@
       opacity: 0;
       transition: opacity 2s;
     }
-
     .brand img {
       max-width: 80px;
       margin-bottom: 5px;
       opacity: 0.9;
     }
-
     .brand small {
       font-size: 0.8rem;
       color: #00ffff;
     }
-
     .brand.visible {
       opacity: 1;
     }
@@ -222,11 +239,9 @@
       opacity: 0;
       transition: all 0.4s;
     }
-
     .mute-btn.visible {
       opacity: 1;
     }
-
     .mute-btn:hover {
       background: rgba(255,255,255,0.1);
       color: #fff;
@@ -245,7 +260,6 @@
       transition: opacity 1.5s, transform 1s;
       transform: scale(0.95);
     }
-
     .treasure-map.visible {
       opacity: 1;
       transform: scale(1);
@@ -253,7 +267,6 @@
   </style>
 </head>
 <body>
-
   <!-- Efectos base -->
   <div class="static"></div>
   <div class="scanlines"></div>
@@ -262,34 +275,29 @@
 
   <!-- Contenido principal -->
   <div class="container" id="content">
-    <!-- Nuevo texto: BYTE HUNT -->
     <h2 id="byteHunt">BYTE HUNT</h2>
-
     <h1>EL TESORO PERDIDO</h1>
     <p class="intro">
       La señal ha sido recuperada...<br>
       Solo una vez, revelará su ubicación.
     </p>
-
     <button class="btn" id="revealBtn">Revelar Mapa del Tesoro</button>
     <button class="mute-btn" id="muteBtn">🔊 Sonido activado</button>
-
-    <!-- Mapa del tesoro -->
     <img src="https://i.imgur.com/5K9fD1o.jpeg" 
          alt="Mapa del Tesoro — Propiedad de Byte" 
          class="treasure-map" 
          id="mapImage">
   </div>
 
-  <!-- Marca con logo y texto en esquina inferior derecha -->
+  <!-- Marca con logo -->
   <div class="brand" id="brand">
     <img src="https://i.imgur.com/mGuYbvq.png" alt="Logo de Byte">
     <small>Descifrando lo oculto.</small>
   </div>
 
-  <!-- Sonidos -->
-  <audio id="crash" src="https://cdn.pixabay.com/audio/2022/02/07/audio_327110981.mp3" preload="auto"></audio>
-  <audio id="ambientMusic" src="https://cdn.pixabay.com/audio/2022/04/13/audio_1784370853.mp3" preload="auto" loop></audio>
+  <!-- Sonidos: Alternativas estables -->
+  <audio id="crash" src="https://www.soundjay.com/misc/sounds/buzz-01.mp3" preload="auto"></audio>
+  <audio id="ambientMusic" src="https://cdn.zen-audio.org/2021/05/Blue-Planet-2-by-Media-Club.mp3" preload="auto" loop></audio>
 
   <script>
     const revealBtn = document.getElementById('revealBtn');
@@ -310,36 +318,34 @@
     revealBtn.addEventListener('click', () => {
       revealBtn.disabled = true;
       revealBtn.textContent = "ERROR...";
-
-      // Mostrar mute
       muteBtn.classList.add('visible');
 
-      // Activar efecto de "página caída"
-      content.classList.add('corrupted');
+      // Activar efectos de corrupción
       document.body.classList.add('shake');
       overlay.style.opacity = '1';
       staticEffect.style.opacity = '0.3';
       scanlines.style.opacity = '1';
 
-      // Sonido de colapso
-      crash.play().catch(() => {});
+      // Sonido de error
+      crash.play().catch(e => console.log("Audio bloqueado", e));
 
-      // Después de 1.5 segundos: recuperación
+      // Después del "colapso"
       setTimeout(() => {
-        content.classList.remove('corrupted');
         document.body.classList.remove('shake');
         revealBtn.textContent = "Recuperando...";
 
-        // Mostrar contador
+        // Mostrar contador (abajo, temblando)
         counter.style.visibility = 'visible';
         counter.style.opacity = '1';
 
-        // Reproducir música épica
-        ambientMusic.play().catch(() => {});
+        // Reproducir música
+        ambientMusic.play().catch(e => console.log("Música bloqueada", e));
 
         let timeLeft = 4;
         const timer = setInterval(() => {
           counter.textContent = timeLeft;
+
+          // Parpadeo de estática y scanlines
           staticEffect.style.opacity = 0.2 + Math.random() * 0.15;
           scanlines.style.opacity = 0.6 + Math.random() * 0.3;
 
@@ -349,7 +355,6 @@
           }
           timeLeft--;
         }, 1000);
-
       }, 1500);
     });
 
@@ -360,25 +365,22 @@
         counter.style.visibility = 'hidden';
       }, 500);
 
-      // Limpiar efectos
+      // Limpiar efectos visuales
       overlay.style.opacity = '0';
       staticEffect.style.opacity = '0.1';
       scanlines.style.opacity = '0.6';
 
-      // Mostrar marca con logo
+      // Mostrar marca y mapa
       brand.classList.add('visible');
-
-      // Mostrar mapa
       mapImage.classList.add('visible');
       revealBtn.textContent = "🗺️ Mapa Revelado";
     }
 
-    // Mute
+    // Botón de mute
     muteBtn.addEventListener('click', () => {
       ambientMusic.muted = !ambientMusic.muted;
       muteBtn.innerHTML = ambientMusic.muted ? "🔇 Sonido desactivado" : "🔊 Sonido activado";
     });
   </script>
-
 </body>
 </html>
