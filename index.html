@@ -3,307 +3,392 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>La Maldición del Tesoro Perdido</title>
+  <title>Revelación del Mapa del Tesoro</title>
   <style>
-  /* Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    background: #000 url('https://images.unsplash.com/photo-1584464457690-0d5183a386e4?ixlib=rb-1.2.1&auto=format&fit=crop&q=80') no-repeat center center fixed;
-    background-size: cover;
-    color: #c5b358;
-    font-family: 'Courier New', monospace;
-    min-height: 100vh;
-    overflow: hidden;
-    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="%23c5b358" stroke-width="2"/></svg>'), auto;
-  }
-
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .static {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('https://img.freepik.com/vector-gratis/textura-ruido-estatico-oscuro_1194-6429.jpg') repeat;
-    opacity: 0.15;
-    pointer-events: none;
-    z-index: 2;
-    animation: noise 0.15s infinite;
-    mix-blend-mode: screen;
-  }
-
-  @keyframes noise {
-    0%, 100% { opacity: 0.1; }
-    50% { opacity: 0.2; }
-  }
-
-  .container {
-    position: relative;
-    z-index: 3;
-    text-align: center;
-    padding: 40px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  h1 {
-    font-size: 4rem;
-    margin: 0 0 20px;
-    text-shadow: 0 0 15px #c5b358, 0 0 30px rgba(197, 179, 88, 0.5);
-    letter-spacing: 4px;
-    animation: flicker 4s infinite alternate, glow 2s ease-in-out infinite alternate;
-  }
-
-  @keyframes flicker {
-    0%, 18%, 22%, 25%, 53%, 57%, 100% {
-      text-shadow: 0 0 10px #c5b358, 0 0 20px rgba(197, 179, 88, 0.5);
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    20%, 24%, 55% {
-      text-shadow: none;
+
+    body {
+      background: #000 url('https://images.unsplash.com/photo-1584464457690-0d5183a386e4?ixlib=rb-1.2.1&auto=format&fit=crop&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #c5b358;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      overflow: hidden;
+      cursor: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="%23c5b358" stroke-width="2"/></svg>'), auto;
     }
-  }
 
-  @keyframes glow {
-    0% { color: #c5b358; }
-    100% { color: #ffcc00; }
-  }
+    /* Logo en la esquina superior izquierda */
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      max-width: 150px;
+      z-index: 10;
+    }
 
-  .clue {
-    font-size: 1.4rem;
-    max-width: 700px;
-    line-height: 1.8;
-    opacity: 0;
-    transition: opacity 2s;
-    margin: 20px 0;
-    border-left: 3px solid #c5b358;
-    padding-left: 20px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 5px;
-  }
+    /* Efecto de estática global */
+    .static {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://img.freepik.com/vector-gratis/textura-ruido-estatico-oscuro_1194-6429.jpg') repeat;
+      background-size: 100px 100px;
+      opacity: 0.1;
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: screen;
+      animation: noise 0.15s infinite;
+    }
 
-  .clue.visible {
-    opacity: 1;
-  }
+    @keyframes noise {
+      0%, 100% { opacity: 0.1; }
+      50% { opacity: 0.15; }
+    }
 
-  .warning {
-    color: #ff0000;
-    font-weight: bold;
-    font-style: italic;
-    margin: 15px 0;
-    opacity: 0;
-    transition: opacity 3s;
-  }
+    /* Líneas de escaneo */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      opacity: 0.6;
+    }
 
-  .warning.visible {
-    opacity: 1;
-  }
+    /* Contador */
+    .counter {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12rem;
+      font-weight: bold;
+      color: #00ffff;
+      text-shadow: 
+        0 0 10px black,
+        0 0 20px rgba(0, 255, 255, 0.8),
+        0 0 30px rgba(0, 255, 255, 0.5);
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      font-family: 'Courier New', monospace;
+      mix-blend-mode: screen;
+      letter-spacing: 5px;
+      animation: flickerCounter 0.8s infinite alternate;
+    }
 
-  .btn {
-    margin-top: 30px;
-    padding: 12px 30px;
-    background: transparent;
-    border: 1px solid #c5b358;
-    color: #c5b358;
-    font-family: 'Courier New', monospace;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.4s;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-  }
+    @keyframes flickerCounter {
+      from { opacity: 0.7; text-shadow: 0 0 5px black, 0 0 15px #00ffff; }
+      to { opacity: 1; text-shadow: 0 0 20px black, 0 0 40px #00ffff, 0 0 60px rgba(0,255,255,0.8); }
+    }
 
-  .btn.visible {
-    opacity: 1;
-    animation: pulse 2s infinite;
-  }
+    /* Overlay de corrupción */
+    .glitch-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
 
-  @keyframes pulse {
-    0% { box-shadow: 0 0 10px #c5b358; }
-    50% { box-shadow: 0 0 25px #c5b358, 0 0 40px rgba(197, 179, 88, 0.8); }
-    100% { box-shadow: 0 0 10px #c5b358; }
-  }
+    /* Contenedor principal */
+    .container {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Centra verticalmente */
+      align-items: center; /* Centra horizontalmente */
+      transition: opacity 0.5s;
+    }
 
-  .btn:hover {
-    background: rgba(197, 179, 88, 0.1);
-    transform: scale(1.05);
-  }
+    h1, .intro {
+      filter: none;
+      transition: filter 0.1s;
+    }
 
-  .hidden-message {
-    font-size: 1rem;
-    color: #550000;
-    margin-top: 20px;
-    opacity: 0;
-    transition: opacity 3s;
-  }
+    /* Animación de corrupción */
+    .corrupted * {
+      animation: glitchText 0.2s infinite !important;
+      position: relative;
+      z-index: 5;
+    }
 
-  .hidden-message.visible {
-    opacity: 1;
-  }
+    @keyframes glitchText {
+      0% { text-shadow: 0 0 0 red; }
+      20% { text-shadow: 2px -2px 0 blue; }
+      40% { text-shadow: -2px 2px 0 red; }
+      60% { text-shadow: 2px 2px 0 green; }
+      80% { text-shadow: -2px -2px 0 yellow; }
+      100% { text-shadow: 0 0 0 white; }
+    }
 
-  /* Efecto de distorsión en el fondo */
-  .distortion {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.9) 100%);
-    opacity: 0;
-    z-index: 4;
-    transition: opacity 0.5s;
-  }
+    .shake {
+      animation: shake 0.1s infinite;
+    }
 
-  .distortion.active {
-    opacity: 1;
-  }
+    @keyframes shake {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(2px, -2px); }
+      50% { transform: translate(-2px, 2px); }
+      75% { transform: translate(2px, 2px); }
+      100% { transform: translate(0, 0); }
+    }
 
-  /* Fuente antigua */
-  @font-face {
-    font-family: 'OldScript';
-    src: url('https://fonts.googleapis.com/css2?family=Medieval+Sharp&display=swap');
-  }
+    h1 {
+      font-size: 3.5rem;
+      margin: 0 0 20px;
+      text-shadow: 0 0 15px #c5b358;
+      letter-spacing: 3px;
+      animation: glow 2s infinite alternate;
+    }
 
-  .ancient {
-    font-family: 'Medieval Sharp', cursive;
-    font-size: 1.2rem;
-    color: #d4af37;
-    margin: 10px 0;
-    opacity: 0;
-  }
+    @keyframes glow {
+      0% { color: #c5b358; text-shadow: 0 0 10px #c5b358; }
+      100% { color: #ffcc00; text-shadow: 0 0 20px #ffcc00, 0 0 30px rgba(255,204,0,0.5); }
+    }
 
-  .ancient.visible {
-    opacity: 1;
-  }
-</style>
+    .intro {
+      font-size: 1.3rem;
+      max-width: 700px;
+      line-height: 1.8;
+      margin: 20px 0;
+      color: #ccc;
+    }
+
+    .btn {
+      margin-top: 30px;
+      padding: 14px 30px;
+      background: transparent;
+      border: 1px solid #00ffff;
+      color: #00ffff;
+      font-family: 'Courier New', monospace;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.4s;
+    }
+
+    .btn:hover {
+      background: rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+
+    /* Marca Byte */
+    .brand {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: #00ffff;
+      z-index: 10;
+      text-align: right;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+      opacity: 0;
+      transition: opacity 2s;
+    }
+
+    .brand.visible {
+      opacity: 1;
+    }
+
+    .brand strong {
+      font-weight: bold;
+    }
+
+    /* Botón de mute */
+    .mute-btn {
+      margin-top: 15px;
+      background: transparent;
+      border: 1px solid #555;
+      color: #aaa;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.4s;
+    }
+
+    .mute-btn.visible {
+      opacity: 1;
+    }
+
+    .mute-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    /* Imagen del mapa */
+    .treasure-map {
+      margin-top: 40px;
+      width: 100%; /* Ocupa todo el ancho */
+      height: 100%; /* Ocupa toda la altura disponible */
+      object-fit: contain; /* Mantiene proporciones */
+      border: 3px solid #00ffff;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+      opacity: 0;
+      transition: opacity 1.5s, transform 1s;
+      transform: scale(0.95);
+    }
+
+    .treasure-map.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+  </style>
 </head>
 <body>
 
-  <div class="overlay"></div>
-  <div class="static"></div>
-  <div class="distortion" id="distortion"></div>
-
-  <div class="container">
-    <h1>LA MALDICIÓN</h1>
-    <p class="clue" id="intro">Dicen que el tesoro fue enterrado con el capitán <span style="color: red;">Blackthorn</span>... en 1783. <br>Quien lo desentierre... heredará su maldición.</p>
-    
-    <div class="warning" id="warning">...no sigas... no es demasiado tarde...</div>
-    
-    <button class="btn" id="startBtn">¿Aceptas el desafío?</button>
-    
-    <p class="clue" id="clue1">Primera pista: <br>"Donde el cuervo grita al anochecer, <br>busca la piedra con forma de <span id="secret-word" style="visibility: hidden;">serpiente</span>."</p>
-    
-    <p class="ancient" id="ancient">℣. In tenebris regnat qui aurum non timet.</p>
-    
-    <p class="hidden-message" id="hiddenMsg">AVISO: El tiempo se acaba. Él sabe que estás aquí.</p>
+  <!-- Logo en la esquina superior izquierda -->
+  <div class="logo">
+    <img src="https://i.imgur.com/mGuYbvq.png" alt="Logo de Byte" style="max-width: 150px;">
   </div>
 
-  <!-- Sonidos (ocultos) -->
-  <audio id="ambient" src="https://cdn.pixabay.com/audio/2021/08/18/audio_698583225.mp3" loop></audio>
-  <audio id="whisper" src="https://cdn.pixabay.com/audio/2022/01/25/audio_46567c9a88.mp3"></audio>
-  <audio id="scream" src="https://cdn.pixabay.com/audio/2022/04/13/audio_1784370853.mp3"></audio>
+  <!-- Efectos base -->
+  <div class="static"></div>
+  <div class="scanlines"></div>
+  <div class="glitch-overlay"></div>
+  <div class="counter" id="counter">4</div>
+
+  <!-- Contenido principal -->
+  <div class="container" id="content">
+    <h1>EL TESORO PERDIDO</h1>
+    <p class="intro">
+      La señal ha sido recuperada...<br>
+      Solo una vez, revelará su ubicación.
+    </p>
+
+    <button class="btn" id="revealBtn">Revelar Mapa del Tesoro</button>
+    <button class="mute-btn" id="muteBtn">🔊 Sonido activado</button>
+
+    <!-- Mapa del tesoro (tu imagen) -->
+    <img src="https://i.imgur.com/5K9fD1o.jpeg" 
+         alt="Mapa del Tesoro — Propiedad de Byte" 
+         class="treasure-map" 
+         id="mapImage">
+  </div>
+
+  <!-- Marca de Byte -->
+  <div class="brand" id="brand">
+    <strong>Byte</strong><br>
+    <small>Descifrando lo oculto.</small>
+  </div>
+
+  <!-- Sonidos -->
+  <audio id="crash" src="https://cdn.pixabay.com/audio/2022/02/07/audio_327110981.mp3" preload="auto"></audio>
+  <audio id="ambientMusic" src="https://cdn.pixabay.com/audio/2022/04/13/audio_1784370853.mp3" preload="auto" loop></audio>
 
   <script>
-    const ambientSound = document.getElementById('ambient');
-    const whisperSound = document.getElementById('whisper');
-    const screamSound = document.getElementById('scream');
-    const distortion = document.getElementById('distortion');
+    const revealBtn = document.getElementById('revealBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const mapImage = document.getElementById('mapImage');
+    const counter = document.getElementById('counter');
+    const content = document.getElementById('content');
+    const overlay = document.querySelector('.glitch-overlay');
+    const staticEffect = document.querySelector('.static');
+    const scanlines = document.querySelector('.scanlines');
+    const brand = document.getElementById('brand');
+    const crash = document.getElementById('crash');
+    const ambientMusic = document.getElementById('ambientMusic');
 
-    ambientSound.volume = 0.2;
-    whisperSound.volume = 0.3;
-    screamSound.volume = 0.5;
+    crash.volume = 0.4;
+    ambientMusic.volume = 0.5;
 
-    // Mostrar elementos progresivamente
-    window.addEventListener('load', () => {
+    revealBtn.addEventListener('click', () => {
+      revealBtn.disabled = true;
+      revealBtn.textContent = "ERROR...";
+
+      // Mostrar mute
+      muteBtn.classList.add('visible');
+
+      // Activar efecto de "página caída"
+      content.classList.add('corrupted');
+      document.body.classList.add('shake');
+      overlay.style.opacity = '1';
+      staticEffect.style.opacity = '0.3';
+      scanlines.style.opacity = '1';
+
+      // Sonido de colapso
+      crash.play().catch(() => {});
+
+      // Después de 1.5 segundos: recuperación
       setTimeout(() => {
-        document.getElementById('intro').classList.add('visible');
-        document.getElementById('startBtn').classList.add('visible');
-      }, 1000);
+        content.classList.remove('corrupted');
+        document.body.classList.remove('shake');
+        revealBtn.textContent = "Recuperando...";
 
-      // Susurro después de 5 segundos
-      setTimeout(() => {
-        document.getElementById('warning').classList.add('visible');
-        playSound(whisperSound);
-      }, 5000);
+        // Mostrar contador
+        counter.style.visibility = 'visible';
+        counter.style.opacity = '1';
+
+        // Reproducir música épica
+        ambientMusic.play().catch(() => {});
+
+        let timeLeft = 4;
+        const timer = setInterval(() => {
+          counter.textContent = timeLeft;
+          staticEffect.style.opacity = 0.2 + Math.random() * 0.15;
+          scanlines.style.opacity = 0.6 + Math.random() * 0.3;
+
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            finishReveal();
+          }
+          timeLeft--;
+        }, 1000);
+
+      }, 1500);
     });
 
-    // Botón de inicio
-    document.getElementById('startBtn').addEventListener('click', () => {
-      const btn = document.getElementById('startBtn');
-      btn.textContent = "Corre...";
-      btn.style.background = "rgba(255,0,0,0.2)";
-      btn.style.borderColor = "red";
-
-      // Revelar palabra secreta
-      document.getElementById('secret-word').style.visibility = 'visible';
-      document.getElementById('clue1').classList.add('visible');
-
-      // Mostrar mensaje antiguo
+    function finishReveal() {
+      // Ocultar contador
+      counter.style.opacity = '0';
       setTimeout(() => {
-        document.getElementById('ancient').classList.add('visible');
-      }, 800);
+        counter.style.visibility = 'hidden';
+      }, 500);
 
-      // Efecto de distorsión
-      distortion.classList.add('active');
-      playSound(screamSound);
+      // Limpiar efectos
+      overlay.style.opacity = '0';
+      staticEffect.style.opacity = '0.1';
+      scanlines.style.opacity = '0.6';
 
-      // Mostrar mensaje oculto
-      setTimeout(() => {
-        document.getElementById('hiddenMsg').classList.add('visible');
-      }, 3000);
+      // Mostrar marca "Byte"
+      brand.classList.add('visible');
 
-      // Parpadear fondo
-      setInterval(() => {
-        document.querySelector('.overlay').style.opacity = Math.random() * 0.3 + 0.6;
-      }, 2000);
-
-      // Sonido ambiental (una vez activado)
-      ambientSound.play().catch(e => console.log("Sonido bloqueado"));
-    });
-
-    // Reproducir sonido con intento de desbloqueo
-    function playSound(audio) {
-      audio.play().catch(e => {
-        console.log("Sonido bloqueado, intentando desbloquear...");
-        document.body.addEventListener('click', () => audio.play(), { once: true });
-      });
+      // Mostrar mapa
+      mapImage.classList.add('visible');
+      revealBtn.textContent = "🗺️ Mapa Revelado";
     }
 
-    // Mensaje aleatorio de advertencia al mover el ratón
-    let warnings = [
-      "...te están observando...",
-      "¡NO MIRES ATRÁS!",
-      "El tiempo se acaba...",
-      "Él ya sabe tu nombre..."
-    ];
-
-    document.addEventListener('mousemove', () => {
-      if (Math.random() < 0.03) {
-        alert(warnings[Math.floor(Math.random() * warnings.length)]);
-      }
+    // Mute
+    muteBtn.addEventListener('click', () => {
+      ambientMusic.muted = !ambientMusic.muted;
+      muteBtn.innerHTML = ambientMusic.muted ? "🔇 Sonido desactivado" : "🔊 Sonido activado";
     });
-
-    // Bloquear clic derecho (para misterio)
-    document.addEventListener('contextmenu', e => e.preventDefault());
   </script>
 
 </body>
