@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Revelación del Mapa del Tesoro</title>
+  <!-- Fuente Orbitron (estilo futurista/digital) -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
   <style>
     /* Reset */
     * {
@@ -18,17 +20,8 @@
       color: #c5b358;
       font-family: 'Courier New', monospace;
       min-height: 100vh;
-      overflow: hidden;
+      overflow-y: auto;
       cursor: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="%23c5b358" stroke-width="2"/></svg>'), auto;
-    }
-
-    /* Logo en la esquina superior izquierda */
-    .logo {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      max-width: 150px;
-      z-index: 10;
     }
 
     /* Efecto de estática global */
@@ -120,42 +113,30 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center; /* Centra verticalmente */
-      align-items: center; /* Centra horizontalmente */
+      justify-content: center;
+      align-items: center;
       transition: opacity 0.5s;
     }
 
-    h1, .intro {
-      filter: none;
-      transition: filter 0.1s;
+    /* Texto BYTE HUNT */
+    #byteHunt {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #00ffff;
+      text-shadow: 
+        0 0 5px rgba(0, 255, 255, 0.5),
+        0 0 10px rgba(0, 255, 255, 0.7),
+        0 0 20px rgba(0, 255, 255, 0.9);
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+      animation: pulse 2s infinite alternate;
+      mix-blend-mode: screen;
     }
 
-    /* Animación de corrupción */
-    .corrupted * {
-      animation: glitchText 0.2s infinite !important;
-      position: relative;
-      z-index: 5;
-    }
-
-    @keyframes glitchText {
-      0% { text-shadow: 0 0 0 red; }
-      20% { text-shadow: 2px -2px 0 blue; }
-      40% { text-shadow: -2px 2px 0 red; }
-      60% { text-shadow: 2px 2px 0 green; }
-      80% { text-shadow: -2px -2px 0 yellow; }
-      100% { text-shadow: 0 0 0 white; }
-    }
-
-    .shake {
-      animation: shake 0.1s infinite;
-    }
-
-    @keyframes shake {
-      0% { transform: translate(0, 0); }
-      25% { transform: translate(2px, -2px); }
-      50% { transform: translate(-2px, 2px); }
-      75% { transform: translate(2px, 2px); }
-      100% { transform: translate(0, 0); }
+    @keyframes pulse {
+      0% { text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff; }
+      100% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px rgba(0,255,255,0.8); }
     }
 
     h1 {
@@ -196,7 +177,7 @@
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
     }
 
-    /* Marca Byte */
+    /* Marca en esquina inferior derecha */
     .brand {
       position: fixed;
       bottom: 20px;
@@ -205,18 +186,28 @@
       font-size: 1rem;
       color: #00ffff;
       z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       text-align: right;
       text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
       opacity: 0;
       transition: opacity 2s;
     }
 
-    .brand.visible {
-      opacity: 1;
+    .brand img {
+      max-width: 80px;
+      margin-bottom: 5px;
+      opacity: 0.9;
     }
 
-    .brand strong {
-      font-weight: bold;
+    .brand small {
+      font-size: 0.8rem;
+      color: #00ffff;
+    }
+
+    .brand.visible {
+      opacity: 1;
     }
 
     /* Botón de mute */
@@ -244,9 +235,9 @@
     /* Imagen del mapa */
     .treasure-map {
       margin-top: 40px;
-      width: 100%; /* Ocupa todo el ancho */
-      height: 100%; /* Ocupa toda la altura disponible */
-      object-fit: contain; /* Mantiene proporciones */
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
       border: 3px solid #00ffff;
       border-radius: 12px;
       box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
@@ -263,11 +254,6 @@
 </head>
 <body>
 
-  <!-- Logo en la esquina superior izquierda -->
-  <div class="logo">
-    <img src="https://i.imgur.com/mGuYbvq.png" alt="Logo de Byte" style="max-width: 150px;">
-  </div>
-
   <!-- Efectos base -->
   <div class="static"></div>
   <div class="scanlines"></div>
@@ -276,6 +262,9 @@
 
   <!-- Contenido principal -->
   <div class="container" id="content">
+    <!-- Nuevo texto: BYTE HUNT -->
+    <h2 id="byteHunt">BYTE HUNT</h2>
+
     <h1>EL TESORO PERDIDO</h1>
     <p class="intro">
       La señal ha sido recuperada...<br>
@@ -285,16 +274,16 @@
     <button class="btn" id="revealBtn">Revelar Mapa del Tesoro</button>
     <button class="mute-btn" id="muteBtn">🔊 Sonido activado</button>
 
-    <!-- Mapa del tesoro (tu imagen) -->
+    <!-- Mapa del tesoro -->
     <img src="https://i.imgur.com/5K9fD1o.jpeg" 
          alt="Mapa del Tesoro — Propiedad de Byte" 
          class="treasure-map" 
          id="mapImage">
   </div>
 
-  <!-- Marca de Byte -->
+  <!-- Marca con logo y texto en esquina inferior derecha -->
   <div class="brand" id="brand">
-    <strong>Byte</strong><br>
+    <img src="https://i.imgur.com/mGuYbvq.png" alt="Logo de Byte">
     <small>Descifrando lo oculto.</small>
   </div>
 
@@ -376,7 +365,7 @@
       staticEffect.style.opacity = '0.1';
       scanlines.style.opacity = '0.6';
 
-      // Mostrar marca "Byte"
+      // Mostrar marca con logo
       brand.classList.add('visible');
 
       // Mostrar mapa
